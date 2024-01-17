@@ -17,29 +17,30 @@ func main() {
 
 	tabooMap := getCensorMap(file)
 	for {
-		word := getUserString()
-		if word == "exit" {
+		switch word := getUserString(); word {
+		case "exit":
 			fmt.Println("Bye!")
 			return
+		default:
+			fmt.Println(censorFilter(tabooMap, word))
 		}
-		fmt.Println(wordCensor(tabooMap, word))
 	}
 }
 
-func wordCensor(tabooMap map[string]string, word string) (censor string) {
-	if censoredWord, ok := tabooMap[strings.ToLower(word)]; ok {
-		return censoredWord
+func censorFilter(tabooMap map[string]bool, word string) (censor string) {
+	if _, ok := tabooMap[strings.ToLower(word)]; ok {
+		return getCensoredWord(word)
 	}
 
 	return word
 
 }
 
-func getCensorMap(file []byte) (censoredWords map[string]string) {
+func getCensorMap(file []byte) (censoredWords map[string]bool) {
 	taboos := strings.Split(string(file), "\n")
-	censoredWords = map[string]string{}
+	censoredWords = map[string]bool{}
 	for _, taboo := range taboos {
-		censoredWords[strings.ToLower(taboo)] = getCensoredWord(taboo)
+		censoredWords[strings.ToLower(taboo)] = true
 	}
 
 	return censoredWords
