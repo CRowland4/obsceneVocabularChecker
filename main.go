@@ -8,7 +8,6 @@ import (
 
 func main() {
 	filename := getUserString()
-	word := getUserString()
 
 	file, err := os.ReadFile(filename)
 	if err != nil {
@@ -16,23 +15,42 @@ func main() {
 		return
 	}
 
-	fmt.Println(isWordTaboo(file, word))
-	return
+	tabooMap := getCensorMap(file)
+	for {
+		word := getUserString()
+		if word == "exit" {
+			fmt.Println("Bye!")
+			return
+		}
+		fmt.Println(wordCensor(tabooMap, word))
+	}
 }
 
-func isWordTaboo(file []byte, word string) (isTaboo bool) {
+func wordCensor(tabooMap map[string]string, word string) (censor string) {
+	if censoredWord, ok := tabooMap[strings.ToLower(word)]; ok {
+		return censoredWord
+	}
+
+	return word
+
+}
+
+func getCensorMap(file []byte) (censoredWords map[string]string) {
 	taboos := strings.Split(string(file), "\n")
-	tabooWords := map[string]bool{}
+	censoredWords = map[string]string{}
 	for _, taboo := range taboos {
-		tabooWords[strings.ToLower(taboo)] = true
+		censoredWords[strings.ToLower(taboo)] = getCensoredWord(taboo)
 	}
 
-	if _, ok := tabooWords[strings.ToLower(word)]; ok {
-		return true
+	return censoredWords
+}
+
+func getCensoredWord(word string) (censoredWord string) {
+	for _ = range word {
+		censoredWord += "*"
 	}
 
-	return false
-
+	return censoredWord
 }
 
 func getUserString() (str string) {
