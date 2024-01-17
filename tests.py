@@ -34,8 +34,8 @@ class CheckerStage3Test(StageTest):
         pr.execute(FILENAME)
         for pair in WORDS_TO_CHECK:
             word, flag = pair
-            out = pr.execute(word)
-            if out.strip() != self.exemplary_output(word, flag):
+            out = pr.execute(word).strip()
+            if out != self.exemplary_output(word, flag):
                 if flag:
                     return CheckResult.wrong(MSG_CENS)
                 else:

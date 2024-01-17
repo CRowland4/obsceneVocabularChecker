@@ -17,22 +17,42 @@ func main() {
 
 	tabooMap := getCensorMap(file)
 	for {
-		switch word := getUserString(); word {
+		switch sentence := getUserString(); sentence {
 		case "exit":
 			fmt.Println("Bye!")
 			return
 		default:
-			fmt.Println(censorFilter(tabooMap, word))
+			fmt.Println(censorFilter(tabooMap, sentence))
 		}
 	}
 }
 
-func censorFilter(tabooMap map[string]bool, word string) (censor string) {
-	if _, ok := tabooMap[strings.ToLower(word)]; ok {
-		return getCensoredWord(word)
+func censorFilter(tabooMap map[string]bool, sentence string) (censor string) {
+	var periodFlag bool
+	if strings.Contains(sentence, ".") {
+		sentence = strings.Replace(sentence, ".", "", 1)
+		periodFlag = true
+	} else {
+		periodFlag = false
+	}
+	words := strings.Split(sentence, " ")
+
+	var censorArray []string
+	for _, word := range words {
+		if _, ok := tabooMap[strings.ToLower(word)]; ok {
+			censorArray = append(censorArray, getCensoredWord(word))
+		} else {
+			censorArray = append(censorArray, word)
+		}
+
 	}
 
-	return word
+	censor = strings.Join(censorArray, " ")
+	if periodFlag {
+		censor += "."
+	}
+
+	return censor
 
 }
 
