@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"bufio"
 )
 
 func main() {
+	fmt.Println("Enter a filepath to your list of taboo words (formatted as one word per line): ")
 	filename := getUserString()
 
 	file, err := os.ReadFile(filename)
@@ -17,12 +19,13 @@ func main() {
 
 	tabooMap := getCensorMap(file)
 	for {
+		fmt.Println("\nEnter something to censor: ")
 		switch sentence := getUserString(); sentence {
 		case "exit":
 			fmt.Println("Bye!")
 			return
 		default:
-			fmt.Println(censorFilter(tabooMap, sentence))
+			fmt.Println("\nCensored: " + censorFilter(tabooMap, sentence))
 		}
 	}
 }
@@ -75,6 +78,9 @@ func getCensoredWord(word string) (censoredWord string) {
 }
 
 func getUserString() (str string) {
-	fmt.Scanln(&str)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+
+	str = scanner.Text()
 	return str
 }
